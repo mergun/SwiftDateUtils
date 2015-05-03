@@ -12,24 +12,35 @@ let formatter: NSDateFormatter = NSDateFormatter()
 
 extension NSDate {
     
-    func format(s:String) -> String {
+    public func format(s:String) -> String {
         formatter.dateFormat = s
         return formatter.stringFromDate(self)
     }
     
-    func format(date: NSDateFormatterStyle = .NoStyle, time: NSDateFormatterStyle = .NoStyle) -> String {
+    public func format(date: NSDateFormatterStyle = .NoStyle, time: NSDateFormatterStyle = .NoStyle) -> String {
         formatter.dateFormat = nil;
         formatter.timeStyle = time;
         formatter.dateStyle = date;
         return formatter.stringFromDate(self)
     }
     
+    /**
+    Returns a new NSDate object representing the absolute time calculated by adding given components to the passed date.
+    
+    :param: components Date components.
+    
+    :returns: Date by adding cumponents, otherwise pased date.
+    */
+
     func add(components: NSDateComponents) -> NSDate {
         let cal = NSCalendar.currentCalendar()
-        return cal.dateByAddingComponents(components, toDate: self, options: nil)
+        if let sum = cal.dateByAddingComponents(components, toDate: self, options: nil) {
+            return sum
+        }
+        return self
     }
     
-    func add(years: NSInteger = NSUndefinedDateComponent, months: NSInteger = NSUndefinedDateComponent, weeks:NSInteger = NSUndefinedDateComponent, days: NSInteger = NSUndefinedDateComponent, hours: NSInteger = NSUndefinedDateComponent, minutes: NSInteger = NSUndefinedDateComponent, seconds: NSInteger = NSUndefinedDateComponent) -> NSDate {
+    func add(years: NSInteger = 0, months: NSInteger = 0, weeks:NSInteger = 0, days: NSInteger = 0, hours: NSInteger = 0, minutes: NSInteger = 0, seconds: NSInteger = 0) -> NSDate {
         var components = NSDateComponents()
         components.year = years
         components.month = months
@@ -42,14 +53,14 @@ extension NSDate {
         return self.add(components)
     }
     
-    func subtract(years: NSInteger = NSUndefinedDateComponent, months: NSInteger = NSUndefinedDateComponent, weeks:NSInteger = NSUndefinedDateComponent, days: NSInteger = NSUndefinedDateComponent, hours: NSInteger = NSUndefinedDateComponent, minutes: NSInteger = NSUndefinedDateComponent, seconds: NSInteger = NSUndefinedDateComponent) -> NSDate {
+    func subtract(years: NSInteger = 0, months: NSInteger = 0, weeks:NSInteger = 0, days: NSInteger = 0, hours: NSInteger = 0, minutes: NSInteger = 0, seconds: NSInteger = 0) -> NSDate {
         return self.add(years:-years, months:-months, weeks:-weeks, days:-days, hours:-hours, minutes:-minutes, seconds:-seconds)
     }
     
     func subtract(components: NSDateComponents) -> NSDate {
         
         func negateIfNeeded(i: NSInteger) -> NSInteger {
-            if i == NSUndefinedDateComponent {
+            if UInt(i) == NSDateComponentUndefined {
                 return i
             }
             return -i
@@ -67,61 +78,61 @@ extension NSDate {
     }
 }
 
-@infix func + (left: NSDate, right:NSTimeInterval) -> NSDate {
+public func + (left: NSDate, right:NSTimeInterval) -> NSDate {
     return left.dateByAddingTimeInterval(right)
 }
 
-@infix func + (left: NSDate, right:NSDateComponents) -> NSDate {
+public func + (left: NSDate, right:NSDateComponents) -> NSDate {
     return left.add(right);
 }
 
-@infix func - (left: NSDate, right:NSTimeInterval) -> NSDate {
+public func - (left: NSDate, right:NSTimeInterval) -> NSDate {
     return left.dateByAddingTimeInterval(-right)
 }
 
-@infix func - (left: NSDate, right:NSDateComponents) -> NSDate {
+public func - (left: NSDate, right:NSDateComponents) -> NSDate {
     return left.subtract(right);
 }
 
 extension Int {
 
-    func seconds() -> NSDateComponents {
+    public func seconds() -> NSDateComponents {
         var components = NSDateComponents()
         components.second = self
         return components
     }
     
-    func minutes() -> NSDateComponents {
+    public func minutes() -> NSDateComponents {
         var components = NSDateComponents()
         components.minute = self
         return components
     }
     
-    func hour() -> NSDateComponents {
+    public func hour() -> NSDateComponents {
         var components = NSDateComponents()
         components.hour = self
         return components
     }
     
-    func days() -> NSDateComponents {
+    public func days() -> NSDateComponents {
         var components = NSDateComponents()
         components.day = self
         return components
     }
     
-    func weeks() -> NSDateComponents {
+    public func weeks() -> NSDateComponents {
         var components = NSDateComponents()
         components.weekOfYear = self
         return components
     }
     
-    func month() -> NSDateComponents {
+    public func month() -> NSDateComponents {
         var components = NSDateComponents()
         components.month = self
         return components
     }
     
-    func years() -> NSDateComponents {
+    public func years() -> NSDateComponents {
         var components = NSDateComponents()
         components.year = self
         return components
@@ -129,15 +140,15 @@ extension Int {
     
 }
 
-@infix func + (left: NSDateComponents, right: NSDateComponents) -> NSDateComponents {
+public func + (left: NSDateComponents, right: NSDateComponents) -> NSDateComponents {
     func addIfPossible(left: NSInteger, right:NSInteger) -> NSInteger {
-        if left == NSUndefinedDateComponent && right == NSUndefinedDateComponent {
-            return NSUndefinedDateComponent
+        if UInt(left) == NSDateComponentUndefined && UInt(right) == NSDateComponentUndefined {
+            return 0
         }
-        if left == NSUndefinedDateComponent {
+        if UInt(left) == NSDateComponentUndefined {
             return right
         }
-        if right == NSUndefinedDateComponent {
+        if UInt(right) == NSDateComponentUndefined {
             return left
         }
         return left + right

@@ -15,7 +15,7 @@ class SwiftDateUtilsTests: XCTestCase {
         super.setUp()
         // Put setup code here. This method is called before the invocation of each test method in the class.
         
-        NSTimeZone.setDefaultTimeZone(NSTimeZone(abbreviation: "UTC"))
+        NSTimeZone.setDefaultTimeZone(NSTimeZone(abbreviation: "UTC")!)
     }
     
     override func tearDown() {
@@ -56,11 +56,11 @@ class SwiftDateUtilsTests: XCTestCase {
         let calendar = NSCalendar.currentCalendar()
         
         let d5 = d1 + 1.weeks()
-        let c5 = calendar.components(NSCalendarUnit.YearCalendarUnit, fromDate: d5)
+        let c5 = calendar.components(.CalendarUnitYear, fromDate: d5)
         XCTAssertEqual(c5.year, 2009)
         
         let d6 = d2 - 1.weeks()
-        let c6 = calendar.components(NSCalendarUnit.YearCalendarUnit, fromDate: d6)
+        let c6 = calendar.components(.CalendarUnitYear, fromDate: d6)
         XCTAssertEqual(c6.year, 2008)
         
     }
